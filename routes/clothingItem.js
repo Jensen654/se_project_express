@@ -1,22 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const clothingController = require("../controllers/clothingItem");
-const ClothingItems = require("../utilities/clothingItem");
+const ClothingItems = require("../models/clothingItem");
 
-router.use("/items/:itemId", (req, res) => {
-  const validItem = ClothingItems.findById(req.params.itemId);
+// router.use("/:itemId", (req, res) => {
+//   const validItem = ClothingItems.findById(req.params.itemId);
 
-  if (!validItem) {
-    res.status(404).send({
-      message: "Requested resource not found",
-    });
-  }
-});
+//   if (!validItem) {
+//     res.status(400).send({
+//       message: "Requested resource not found",
+//     });
+//   }
+// });
 
-router.get("/items", clothingController.getClothingItems);
+router.get("/", clothingController.getClothingItems);
 
-router.post("/items", clothingController.createClothingItem);
+router.post("/", clothingController.createClothingItem);
 
-router.delete("/items/:itemId", clothingController.deleteClothingItem);
+router.delete("/:itemId", clothingController.deleteClothingItem);
 
 module.exports = router;

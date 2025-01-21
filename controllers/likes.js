@@ -1,26 +1,15 @@
 const ClothingItems = require("../models/clothingItem");
 const error = require("../utilities/errors");
 
-const getClothingItems = (req, res) => {
-  ClothingItems.find({})
+const likeItem = (req, res) => {
+  ClothingItems.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
     .orFail()
-    .then((clothingItems) => res.send(clothingItems))
-    .catch((err) =>
-      res.status(500).send({ error: `Error Fetching Items: ${err}` })
-    );
-};
-
-const createClothingItem = (req, res) => {
-  const owner = req.user._id;
-  const { name, imageUrl, weather } = req.body;
-  ClothingItems.create({
-    name,
-    imageUrl,
-    weather,
-    owner,
-  })
     .then((item) => {
-      res.status(201).send(item);
+      res.send({ message: `Item ${item} has been liked.` });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -33,11 +22,15 @@ const createClothingItem = (req, res) => {
     });
 };
 
-const deleteClothingItem = (req, res) => {
-  ClothingItems.findByIdAndRemove(req.params.itemId)
+const dislikeItem = (req, res) => {
+  ClothingItems.findByIdAndDelete(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
     .orFail()
     .then((item) => {
-      res.send({ message: `${item} has been deleted.` });
+      res.send({ message: `Item ${item} has been disliked.` });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -50,8 +43,4 @@ const deleteClothingItem = (req, res) => {
     });
 };
 
-module.exports = {
-  getClothingItems,
-  createClothingItem,
-  deleteClothingItem,
-};
+module.exports = { likeItem, dislikeItem };
