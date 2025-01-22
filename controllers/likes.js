@@ -17,7 +17,7 @@ const likeItem = (req, res) => {
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };
@@ -38,7 +38,7 @@ const dislikeItem = (req, res) => {
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };

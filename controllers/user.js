@@ -8,7 +8,7 @@ const getUsers = (req, res) => {
       res.send(users);
     })
     .catch((err) => {
-      error.serverError(res, err);
+      error.serverError(res);
     });
 };
 
@@ -22,7 +22,7 @@ const getUser = (req, res) => {
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };
@@ -36,7 +36,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         error.validationError(res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };

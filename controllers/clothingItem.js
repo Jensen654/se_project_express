@@ -6,7 +6,7 @@ const getClothingItems = (req, res) => {
     .orFail()
     .then((clothingItems) => res.send(clothingItems))
     .catch((err) => {
-      error.serverError(res, err);
+      error.serverError(res);
     });
 };
 
@@ -26,7 +26,7 @@ const createClothingItem = (req, res) => {
       if (err.name === "ValidationError") {
         error.validationError(res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };
@@ -43,7 +43,7 @@ const deleteClothingItem = (req, res) => {
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };

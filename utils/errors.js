@@ -1,6 +1,6 @@
 const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./errorConsts");
 
-const serverError = (res, err) => {
+const serverError = (res) => {
   res.status(DEFAULT).send({ message: "An error has occured on the server." });
 };
 
