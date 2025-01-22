@@ -1,6 +1,8 @@
 const express = require("express");
-const router = express.Router();
+
 const clothingController = require("../controllers/clothingItem");
+
+const router = express.Router();
 
 router.get("/", clothingController.getClothingItems);
 

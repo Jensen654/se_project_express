@@ -17,8 +17,6 @@ const getUser = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.error(err);
-      console.error(err.name);
       if (err.name === "ValidationError") {
         error.validationError(res, err);
       } else if (err.name === "CastError") {

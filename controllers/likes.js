@@ -12,7 +12,6 @@ const likeItem = (req, res) => {
       res.send({ message: `Item ${item} has been liked.` });
     })
     .catch((err) => {
-      console.log(err);
       if (err.name === "ValidationError") {
         error.validationError(res, err);
       } else if (err.name === "CastError") {
