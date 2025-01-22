@@ -9,12 +9,10 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.send({ message: `Item ${item} has been liked.` });
+      res.send({ message: `Item ${item._id} has been liked.` });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         error.itemNotFound(req, res);
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
@@ -32,12 +30,10 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.send({ message: `Item ${item} has been disliked.` });
+      res.send({ message: `Item ${item._id} has been disliked.` });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         error.itemNotFound(req, res);
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);

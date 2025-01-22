@@ -1,27 +1,35 @@
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./errorConsts");
+
 const serverError = (res, err) => {
-  res.status(500).send({ message: err.message });
+  res.status(DEFAULT).send({ message: "An error has occured on the server." });
 };
 
 const userNotFound = (req, res) => {
   res
-    .status(400)
-    .send({ message: `User: ${req.params.userId} does not exist.` });
+    .status(BAD_REQUEST)
+    .send({ message: `The provided ID is invalid: ${req.params.userId}` });
 };
 
 const documentNotFound = (req, res) => {
   res
-    .status(404)
+    .status(NOT_FOUND)
     .send({ message: `User: ${req.params.userId} does not exist.` });
 };
 
 const itemNotFound = (req, res) => {
   res
-    .status(400)
-    .send({ message: `Item: ${req.params.itemId} does not exist.` });
+    .status(BAD_REQUEST)
+    .send({ message: `The Provided ID is invalid: ${req.params.itemId}` });
 };
 
-const validationError = (res, err) => {
-  res.status(400).send({ message: err.message });
+const validationError = (res) => {
+  res.status(BAD_REQUEST).send({
+    message: `The provided info does not conform to database standards/requirements.`,
+  });
+};
+
+const unknownRoute = (res) => {
+  res.status(NOT_FOUND).send({ message: "Route does not exist." });
 };
 
 module.exports = {
@@ -30,4 +38,5 @@ module.exports = {
   validationError,
   itemNotFound,
   documentNotFound,
+  unknownRoute,
 };

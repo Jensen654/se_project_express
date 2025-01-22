@@ -5,9 +5,9 @@ const getClothingItems = (req, res) => {
   ClothingItems.find({})
     .orFail()
     .then((clothingItems) => res.send(clothingItems))
-    .catch((err) =>
-      res.status(500).send({ error: `Error Fetching Items: ${err}` })
-    );
+    .catch((err) => {
+      error.serverError(res, err);
+    });
 };
 
 const createClothingItem = (req, res) => {
@@ -24,9 +24,7 @@ const createClothingItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
-        error.itemNotFound(req, res);
+        error.validationError(res);
       } else {
         error.serverError(res, err);
       }
@@ -37,12 +35,10 @@ const deleteClothingItem = (req, res) => {
   ClothingItems.findByIdAndRemove(req.params.itemId)
     .orFail()
     .then((item) => {
-      res.send({ message: `${item} has been deleted.` });
+      res.send({ message: `${item._id} has been deleted.` });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         error.itemNotFound(req, res);
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);

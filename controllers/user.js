@@ -17,9 +17,7 @@ const getUser = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         error.userNotFound(req, res);
       } else if (err.name === "DocumentNotFoundError") {
         error.documentNotFound(req, res);
@@ -36,9 +34,7 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
-        error.userNotFound(req, res);
+        error.validationError(res);
       } else {
         error.serverError(res, err);
       }
