@@ -1,5 +1,5 @@
 const ClothingItems = require("../models/clothingItem");
-const error = require("../utilities/errors");
+const error = require("../utils/errors");
 
 const likeItem = (req, res) => {
   ClothingItems.findByIdAndUpdate(
