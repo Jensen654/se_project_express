@@ -23,6 +23,8 @@ const getUser = (req, res) => {
         error.validationError(res, err);
       } else if (err.name === "CastError") {
         error.userNotFound(req, res);
+      } else if (err.name === "DocumentNotFoundError") {
+        error.documentNotFound(req, res);
       } else {
         error.serverError(res, err);
       }

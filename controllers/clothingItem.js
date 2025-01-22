@@ -44,6 +44,8 @@ const deleteClothingItem = (req, res) => {
         error.validationError(res, err);
       } else if (err.name === "CastError") {
         error.itemNotFound(req, res);
+      } else if (err.name === "DocumentNotFoundError") {
+        error.documentNotFound(req, res);
       } else {
         error.serverError(res, err);
       }

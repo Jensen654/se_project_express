@@ -7,7 +7,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("Database Connected"))
-  .catch(() => console.log("Database connection error")); // add .then and .catch
+  .catch(() => console.log("Database connection error"));
 const mainRouter = require("./routes/index");
 
 const { PORT = 3001 } = process.env;

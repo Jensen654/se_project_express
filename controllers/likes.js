@@ -12,10 +12,13 @@ const likeItem = (req, res) => {
       res.send({ message: `Item ${item} has been liked.` });
     })
     .catch((err) => {
+      console.log(err);
       if (err.name === "ValidationError") {
         error.validationError(res, err);
       } else if (err.name === "CastError") {
         error.itemNotFound(req, res);
+      } else if (err.name === "DocumentNotFoundError") {
+        error.documentNotFound(req, res);
       } else {
         error.serverError(res, err);
       }
@@ -23,7 +26,7 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  ClothingItems.findByIdAndDelete(
+  ClothingItems.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
@@ -37,6 +40,8 @@ const dislikeItem = (req, res) => {
         error.validationError(res, err);
       } else if (err.name === "CastError") {
         error.itemNotFound(req, res);
+      } else if (err.name === "DocumentNotFoundError") {
+        error.documentNotFound(req, res);
       } else {
         error.serverError(res, err);
       }

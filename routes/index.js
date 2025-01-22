@@ -5,6 +5,6 @@ const likeRouter = require("./likes");
 
 router.use("/users", userRouter);
 router.use("/items", clothingRouter);
-router.use("/items/:itemId/likes", likeRouter);
+router.use("/items", likeRouter);
 
 module.exports = router;
