@@ -7,7 +7,7 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
+    .catch(() => {
       error.serverError(res);
     });
 };

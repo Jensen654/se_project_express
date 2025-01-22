@@ -5,7 +5,7 @@ const getClothingItems = (req, res) => {
   ClothingItems.find({})
     .orFail()
     .then((clothingItems) => res.send(clothingItems))
-    .catch((err) => {
+    .catch(() => {
       error.serverError(res);
     });
 };
