@@ -18,4 +18,12 @@ const validationError = (res, err) => {
   res.status(400).send({ message: err.message });
 };
 
-module.exports = { serverError, userNotFound, validationError, itemNotFound };
+const duplicateEmail = (res) => {
+  res.status(409).send({ message: "Email has already been used." })
+}
+
+const authorizationError = (res) => {
+  res.status(401).send({ message: "Authorization Error" });
+}
+
+module.exports = { serverError, userNotFound, validationError, itemNotFound, duplicateEmail, authorizationError };
