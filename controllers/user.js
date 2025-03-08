@@ -2,7 +2,7 @@ const user = require("../models/user");
 const Users = require("../models/user");
 const error = require("../utils/errors");
 const jwt = require("jsonwebtoken");
-const {JWT_SECRET} = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
   Users.find({})
@@ -40,6 +40,8 @@ const createUser = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         error.validationError(res);
+      } else if (err.code === 11000) {
+        error.duplicateEmail(res);
       } else {
         error.serverError(res);
       }
@@ -47,18 +49,20 @@ const createUser = (req, res) => {
 };
 
 const login = (req, res) => {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   Users.findUserByCredentials(email, password)
-  .orFail()
-  .then((user) => {
-    const token = jwt.sign({_id: user._id}, JWT_SECRET, {expiresIn: "7d",});
-    res.send({token});
-  })
-  .catch((err) => {
-    res.status(401).send(err);
-  });
-}
+    .orFail()
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      error.authorizationError(res);
+    });
+};
 
 module.exports = {
   getUsers,

@@ -1,4 +1,10 @@
-const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./errorConsts");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+  UNAUTHORIZED,
+  DATA_CONFLICT,
+} = require("./errorConsts");
 
 const serverError = (res) => {
   res.status(DEFAULT).send({ message: "An error has occured on the server." });
@@ -33,12 +39,12 @@ const unknownRoute = (res) => {
 };
 
 const duplicateEmail = (res) => {
-  res.status(409).send({ message: "Email has already been used." })
-}
+  res.status(DATA_CONFLICT).send({ message: "Email has already been used." });
+};
 
 const authorizationError = (res) => {
-  res.status(401).send({ message: "Authorization Error" });
-}
+  res.status(UNAUTHORIZED).send({ message: "Authorization Error" });
+};
 
 module.exports = {
   serverError,
