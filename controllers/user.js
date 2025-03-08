@@ -10,8 +10,8 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) => {
-      error.serverError(res, err);
+    .catch(() => {
+      error.serverError(res);
     });
 };
 
@@ -20,14 +20,12 @@ const getUser = (req, res) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.error(err);
-      console.error(err.name);
-      if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
+      if (err.name === "CastError") {
         error.userNotFound(req, res);
+      } else if (err.name === "DocumentNotFoundError") {
+        error.documentNotFound(req, res);
       } else {
-        error.serverError(res, err);
+        error.serverError(res);
       }
     });
 };
@@ -41,14 +39,9 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        error.validationError(res, err);
-      } else if (err.name === "CastError") {
-        error.userNotFound(req, res);
-      } else if(err.status === "11000") {
-        error.duplicateEmail(res)
-      } 
-      else {
-        error.serverError(res, err);
+        error.validationError(res);
+      } else {
+        error.serverError(res);
       }
     });
 };
