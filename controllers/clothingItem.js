@@ -31,21 +31,28 @@ const createClothingItem = (req, res) => {
     });
 };
 
-const deleteClothingItem = (req, res) => {
-  ClothingItems.findByIdAndRemove(req.params.itemId)
-    .orFail()
-    .then((item) => {
-      res.send({ message: `${item._id} has been deleted.` });
-    })
-    .catch((err) => {
-      if (err.name === "CastError") {
-        error.itemNotFound(req, res);
-      } else if (err.name === "DocumentNotFoundError") {
-        error.documentNotFound(req, res);
-      } else {
-        error.serverError(res);
-      }
-    });
+const deleteClothingItem = async (req, res) => {
+  const clothingItem = await ClothingItems.findById(req.params.itemId);
+  console.log(clothingItem.owner);
+  console.log(req.user._id);
+  if (clothingItem.owner.equals(req.user._id)) {
+    ClothingItems.findByIdAndDelete(req.params.itemId)
+      .orFail()
+      .then((item) => {
+        res.send({ message: `${item._id} has been deleted.` });
+      })
+      .catch((err) => {
+        if (err.name === "CastError") {
+          error.itemNotFound(req, res);
+        } else if (err.name === "DocumentNotFoundError") {
+          error.documentNotFound(req, res);
+        } else {
+          error.serverError(res);
+        }
+      });
+  } else {
+    error.forbidden(res);
+  }
 };
 
 module.exports = {

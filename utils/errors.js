@@ -4,6 +4,7 @@ const {
   DEFAULT,
   UNAUTHORIZED,
   DATA_CONFLICT,
+  FORBIDDEN,
 } = require("./errorConsts");
 
 const serverError = (res) => {
@@ -46,6 +47,10 @@ const authorizationError = (res) => {
   res.status(UNAUTHORIZED).send({ message: "Authorization Error" });
 };
 
+const forbidden = (res) => {
+  res.status(FORBIDDEN).send({ message: "Action not allowed" });
+};
+
 module.exports = {
   serverError,
   userNotFound,
@@ -55,4 +60,5 @@ module.exports = {
   unknownRoute,
   duplicateEmail,
   authorizationError,
+  forbidden,
 };
