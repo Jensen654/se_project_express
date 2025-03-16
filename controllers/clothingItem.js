@@ -33,9 +33,7 @@ const createClothingItem = (req, res) => {
 };
 
 const deleteClothingItem = async (req, res) => {
-  const { itemId } = req.params.itemId;
-
-  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+  if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
     return error.validationError(res);
   }
 
