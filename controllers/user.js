@@ -1,8 +1,8 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const error = require("../utils/errors");
-const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const bcrypt = require("bcrypt");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -16,15 +16,15 @@ const getUsers = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  console.log(req.user._id);
   User.findById(req.user._id)
     .orFail()
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === "CastError") {
         error.userNotFound(req, res);
       } else if (err.name === "DocumentNotFoundError") {
-        console.log("yep");
         error.documentNotFound(req, res);
       } else {
         error.serverError(res);
@@ -72,12 +72,7 @@ const login = (req, res) => {
       });
       res.send({ token });
     })
-    .catch((err) => {
-      // if (err.name === "ValidationError") {
-      //   error.validationError(res);
-      // } else {
-      //   error.authorizationError(res);
-      // }
+    .catch(() => {
       error.validationError(res);
     });
 };

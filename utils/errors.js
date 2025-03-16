@@ -20,7 +20,7 @@ const userNotFound = (req, res) => {
 const documentNotFound = (req, res) => {
   res
     .status(NOT_FOUND)
-    .send({ message: `User: ${req.params.userId} does not exist.` });
+    .send({ message: `Document: ${req.params.userId} does not exist.` });
 };
 
 const itemNotFound = (req, res) => {

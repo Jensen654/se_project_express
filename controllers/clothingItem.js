@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const ClothingItems = require("../models/clothingItem");
 const error = require("../utils/errors");
 
@@ -32,26 +33,42 @@ const createClothingItem = (req, res) => {
 };
 
 const deleteClothingItem = async (req, res) => {
-  const clothingItem = await ClothingItems.findById(req.params.itemId);
-  console.log(clothingItem.owner);
-  console.log(req.user._id);
-  if (clothingItem.owner.equals(req.user._id)) {
-    ClothingItems.findByIdAndDelete(req.params.itemId)
-      .orFail()
-      .then((item) => {
-        res.send({ message: `${item._id} has been deleted.` });
-      })
-      .catch((err) => {
-        if (err.name === "CastError") {
-          error.itemNotFound(req, res);
-        } else if (err.name === "DocumentNotFoundError") {
-          error.documentNotFound(req, res);
-        } else {
-          error.serverError(res);
-        }
-      });
-  } else {
-    error.forbidden(res);
+  const { itemId } = req.params.itemId;
+
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return error.validationError(res);
+  }
+
+  try {
+    const clothingItem = await ClothingItems.findById(req.params.itemId);
+
+    if (!clothingItem) {
+      return error.documentNotFound(req, res);
+    }
+
+    if (clothingItem.owner.equals(req.user._id)) {
+      return ClothingItems.findByIdAndDelete(req.params.itemId)
+        .orFail()
+        .then((item) => {
+          res.send({ message: `${item._id} has been deleted.` });
+        })
+        .catch((err) => {
+          if (err.name === "CastError") {
+            return error.itemNotFound(req, res);
+          }
+          if (err.name === "DocumentNotFoundError") {
+            return error.documentNotFound(req, res);
+          }
+          return error.serverError(res);
+        });
+    }
+    return error.forbidden(res);
+  } catch (err) {
+    console.error("error deleting clothingitem:", err);
+    if (err.name === "CastError") {
+      return error.itemNotFound(req, res);
+    }
+    return error.serverError(res);
   }
 };
 

@@ -4,10 +4,11 @@ const clothingRouter = require("./clothingItem");
 const likeRouter = require("./likes");
 const error = require("../utils/errors");
 const { createUser, login } = require("../controllers/user");
+const { authMiddleware } = require("../middlewares/auth");
 
-router.use("/users", userRouter);
+router.use("/users", authMiddleware, userRouter);
 router.use("/items", clothingRouter);
-router.use("/items/:itemId/likes", likeRouter);
+router.use("/items", authMiddleware, likeRouter);
 router.post("/signin", login);
 router.post("/signup", createUser);
 
