@@ -4,17 +4,6 @@ const User = require("../models/user");
 const error = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .orFail()
-    .then((users) => {
-      res.send(users);
-    })
-    .catch(() => {
-      error.serverError(res);
-    });
-};
-
 const getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail()
@@ -65,15 +54,22 @@ const createUser = async (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials(email, password)
+  if (!email || !password) {
+    return error.requiredFields(res);
+  }
+
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      return res.send({ token });
     })
-    .catch(() => {
-      error.validationError(res);
+    .catch((err) => {
+      if (err.message === "Incorrect Email or Password") {
+        return error.incorrectEmailOrPassword(res);
+      }
+      return error.serverError(res);
     });
 };
 
@@ -99,7 +95,6 @@ const updateUserProfile = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   getCurrentUser,
   createUser,
   login,

@@ -51,6 +51,16 @@ const forbidden = (res) => {
   res.status(FORBIDDEN).send({ message: "Action not allowed" });
 };
 
+const requiredFields = (res) => {
+  res
+    .status(BAD_REQUEST)
+    .send({ message: "The password and email fields are required." });
+};
+
+const incorrectEmailOrPassword = (res) => {
+  res.status(UNAUTHORIZED).send({ message: "Incorrect Email or Password" });
+};
+
 module.exports = {
   serverError,
   userNotFound,
@@ -61,4 +71,6 @@ module.exports = {
   duplicateEmail,
   authorizationError,
   forbidden,
+  requiredFields,
+  incorrectEmailOrPassword,
 };

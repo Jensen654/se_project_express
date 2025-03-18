@@ -16,12 +16,6 @@ mongoose
   .catch(() => console.log("Database connection error"));
 
 const { PORT = 3001 } = process.env;
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6782fb03d4ba066c949a84d0",
-  };
-  next();
-});
 
 app.use(cors());
 app.use(express.json());

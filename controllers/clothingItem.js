@@ -4,7 +4,6 @@ const error = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
   ClothingItems.find({})
-    .orFail()
     .then((clothingItems) => res.send(clothingItems))
     .catch(() => {
       error.serverError(res);
