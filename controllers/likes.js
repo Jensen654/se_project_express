@@ -9,7 +9,8 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.send({ message: `Item ${item._id} has been liked.` });
+      res.send(item);
+      // res.send({ message: `Item ${item._id} has been liked.` });
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -30,7 +31,8 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.send({ message: `Item ${item._id} has been disliked.` });
+      // res.send({ message: `Item ${item._id} has been disliked.` });
+      res.send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
