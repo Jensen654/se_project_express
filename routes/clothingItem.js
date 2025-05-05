@@ -7,10 +7,15 @@ const {
   deleteClothingItem,
 } = require("../controllers/clothingItem");
 
+const {
+  clothingItemBodyValidator,
+  idValidator,
+} = require("../middlewares/validation");
+
 router.get("/", getClothingItems);
 
-router.post("/", authMiddleware, createClothingItem);
+router.post("/", authMiddleware, clothingItemBodyValidator, createClothingItem);
 
-router.delete("/:itemId", authMiddleware, deleteClothingItem);
+router.delete("/:itemId", authMiddleware, idValidator, deleteClothingItem);
 
 module.exports = router;

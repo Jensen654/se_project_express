@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
 const app = express();
+const { errorHandler } = require("./middlewares/error-handler");
+const { errors } = require("celebrate");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 app.use(
   cors({
@@ -22,7 +25,11 @@ mongoose
 const { PORT = 3001 } = process.env;
 
 app.use(express.json());
+app.use(requestLogger);
 app.use("/", mainRouter);
+app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App is listening at ${PORT}`);

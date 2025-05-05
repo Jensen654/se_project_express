@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const ClothingItems = require("../models/clothingItem");
 const error = require("../utils/errors");
+const BadRequestError = require("../errors/BadRequestError");
 
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   ClothingItems.find({})
     .then((clothingItems) => res.send(clothingItems))
-    .catch(() => {
-      error.serverError(res);
+    .catch((err) => {
+      next(err);
     });
 };
 
@@ -24,9 +25,13 @@ const createClothingItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        error.validationError(res);
+        next(
+          new BadRequestError(
+            "One of the provided inputs does not conform to database standards"
+          )
+        );
       } else {
-        error.serverError(res);
+        next(err);
       }
     });
 };
