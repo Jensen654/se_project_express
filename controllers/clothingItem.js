@@ -11,7 +11,7 @@ const getClothingItems = (req, res, next) => {
     });
 };
 
-const createClothingItem = (req, res) => {
+const createClothingItem = (req, res, next) => {
   const owner = req.user._id;
   const { name, imageUrl, weather } = req.body;
   ClothingItems.create({
