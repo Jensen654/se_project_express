@@ -1,5 +1,5 @@
-const JWT_SECRET = "secret web token";
+const { JWT_SECRET = "super-strong-secret" } = process.env;
 
 module.exports = {
-    JWT_SECRET,
-}
+  JWT_SECRET,
+};
