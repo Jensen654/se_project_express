@@ -12,7 +12,9 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: (origin, callback) => {
+      callback(null, origin || "*");
+    },
     credentials: true,
   })
 );
