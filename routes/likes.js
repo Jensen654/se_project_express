@@ -1,10 +1,10 @@
 const router = require("express").Router();
 
-const likeController = require("../controllers/likes");
+const { likeItem, dislikeItem } = require("../controllers/likes");
 
-// const { idValidator } = require("../middlewares/validation");
+const { idValidator } = require("../middlewares/validation");
 
-router.put("/:itemId/likes", likeController.likeItem);
-router.delete("/:itemId/likes", likeController.dislikeItem);
+router.put("/:itemId/likes", idValidator, likeItem);
+router.delete("/:itemId/likes", idValidator, dislikeItem);
 
 module.exports = router;

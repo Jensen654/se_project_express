@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const error = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ConflictError = require("../errors/ConflictError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => {
@@ -12,16 +15,20 @@ const getCurrentUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        error.userNotFound(req, res);
+        next(
+          new BadRequestError(
+            `The provided user ID is invalid: ${req.params.userId}`
+          )
+        );
       } else if (err.name === "DocumentNotFoundError") {
-        error.documentNotFound(req, res);
+        next(new NotFoundError(`User: ${req.params.userId} does not exist.`));
       } else {
-        error.serverError(res);
+        next(err);
       }
     });
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   try {
@@ -39,23 +46,29 @@ const createUser = async (req, res) => {
       })
       .catch((err) => {
         if (err.name === "ValidationError") {
-          error.validationError(res);
+          next(
+            new BadRequestError(
+              `The provided info does not conform to database standards/requirements.`
+            )
+          );
         } else if (err.code === 11000) {
-          error.duplicateEmail(res);
+          next(new ConflictError("Email has already been used."));
         } else {
-          error.serverError(res);
+          next(err);
         }
       });
   } catch (err) {
-    error.serverError(res);
+    next(err);
   }
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return error.requiredFields(res);
+    return next(
+      new BadRequestError("The password and email fields are required.")
+    );
   }
 
   return User.findUserByCredentials(email, password)
@@ -67,13 +80,13 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.message === "Incorrect Email or Password") {
-        return error.incorrectEmailOrPassword(res);
+        return next(new UnauthorizedError("Incorrect Email or Password"));
       }
-      return error.serverError(res);
+      return next(err);
     });
 };
 
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, avatar: req.body.avatar },
@@ -85,11 +98,15 @@ const updateUserProfile = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        error.validationError(res);
+        next(
+          new BadRequestError(
+            `The provided info does not conform to database standards/requirements.`
+          )
+        );
       } else if (err.name === "DocumentNotFoundError") {
-        error.documentNotFound(req, res);
+        next(new NotFoundError(`User: ${req.params.userId} does not exist.`));
       } else {
-        error.serverError(res);
+        next(err);
       }
     });
 };

@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const { authorizationError } = require("../utils/errors");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
 const authMiddleware = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return authorizationError(res);
+    return next(new UnauthorizedError("No authorization found"));
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return authorizationError(res);
+    return next(new UnauthorizedError("No json web token found"));
   }
 
   req.user = payload;

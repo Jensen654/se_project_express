@@ -1,7 +1,8 @@
 const ClothingItems = require("../models/clothingItem");
-const error = require("../utils/errors");
+const NotFoundError = require("../errors/NotFoundError");
+const BadRequestError = require("../errors/BadRequestError");
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   ClothingItems.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -10,20 +11,25 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => {
       res.send(item);
-      // res.send({ message: `Item ${item._id} has been liked.` });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        error.itemNotFound(req, res);
+        next(
+          new BadRequestError(
+            `The Provided ID is invalid: ${req.params.itemId}`
+          )
+        );
       } else if (err.name === "DocumentNotFoundError") {
-        error.documentNotFound(req, res);
+        next(
+          new NotFoundError(`Document: ${req.params.userId} does not exist.`)
+        );
       } else {
-        error.serverError(res);
+        next(err);
       }
     });
 };
 
-const dislikeItem = (req, res) => {
+const dislikeItem = (req, res, next) => {
   ClothingItems.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
@@ -31,16 +37,21 @@ const dislikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      // res.send({ message: `Item ${item._id} has been disliked.` });
       res.send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        error.itemNotFound(req, res);
+        next(
+          new BadRequestError(
+            `The Provided ID is invalid: ${req.params.itemId}`
+          )
+        );
       } else if (err.name === "DocumentNotFoundError") {
-        error.documentNotFound(req, res);
+        next(
+          new NotFoundError(`Document: ${req.params.userId} does not exist.`)
+        );
       } else {
-        error.serverError(res);
+        next(err);
       }
     });
 };

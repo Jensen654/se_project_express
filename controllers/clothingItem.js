@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const ClothingItems = require("../models/clothingItem");
-const error = require("../utils/errors");
 const BadRequestError = require("../errors/BadRequestError");
+const NotFoundError = require("../errors/NotFoundError");
+const ForbiddernError = require("../errors/ForbiddenError");
 
 const getClothingItems = (req, res, next) => {
   ClothingItems.find({})
@@ -36,16 +37,16 @@ const createClothingItem = (req, res, next) => {
     });
 };
 
-const deleteClothingItem = async (req, res) => {
+const deleteClothingItem = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.itemId)) {
-    return error.validationError(res);
+    return next(new BadRequestError("Clothing ID is invalid."));
   }
 
   try {
     const clothingItem = await ClothingItems.findById(req.params.itemId);
 
     if (!clothingItem) {
-      return error.documentNotFound(req, res);
+      return next(new NotFoundError("Clothing item not found in database."));
     }
 
     if (clothingItem.owner.equals(req.user._id)) {
@@ -56,21 +57,33 @@ const deleteClothingItem = async (req, res) => {
         })
         .catch((err) => {
           if (err.name === "CastError") {
-            return error.itemNotFound(req, res);
+            return next(
+              new BadRequestError(
+                "Clothing item ID does not conform to database standards."
+              )
+            );
           }
           if (err.name === "DocumentNotFoundError") {
-            return error.documentNotFound(req, res);
+            return next(
+              new NotFoundError("Clothing item ID not contained in database.")
+            );
           }
-          return error.serverError(res);
+          return next(err);
         });
     }
-    return error.forbidden(res);
+    return next(
+      new ForbiddernError("You do not have access to delete this file.")
+    );
   } catch (err) {
     console.error("error deleting clothingitem:", err);
     if (err.name === "CastError") {
-      return error.itemNotFound(req, res);
+      return next(
+        new BadRequestError(
+          "Could not delete clothing item, Clothing item ID does not conform to database standards."
+        )
+      );
     }
-    return error.serverError(res);
+    return next(err);
   }
 };
 

@@ -59,14 +59,10 @@ const loginValidator = celebrate({
   }),
 });
 
-// const validateId = celebrate({
-//   params: Joi.object().keys({}),
-// });
-
 const idValidator = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().hex().length(24).messages({
-      "string.empty": 'The "email" field must be filled in',
+      "string.empty": 'The "id" field must be filled in',
       "string.hex": "The value must be a valid hexadecimal string.",
       "string.length": "The hex string must be exactly 24 characters long.",
     }),
