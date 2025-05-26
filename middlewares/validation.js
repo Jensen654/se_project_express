@@ -22,7 +22,6 @@ const clothingItemBodyValidator = celebrate({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',
     }),
-    _id: Joi.number(),
   }),
 });
 
@@ -69,9 +68,24 @@ const idValidator = celebrate({
   }),
 });
 
+const updateUserValidator = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).messages({
+      "string.empty": 'The "name" field must be filled in',
+      "string.min": 'The minimum length of the "name" field must be 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+    }),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'the "avatar" field must be a valid url',
+    }),
+  }),
+});
+
 module.exports = {
   clothingItemBodyValidator,
   userInfoBodyValidator,
   loginValidator,
   idValidator,
+  updateUserValidator,
 };
